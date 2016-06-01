@@ -1,0 +1,34 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 'strapdown-lighttpd-s2i' image.
+# The 'assemble' script builds your application source ready to run.
+#
+# For more information refer to the documentation:
+#   https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+echo "[INFO] Building application into strapdown web"
+# Copy the strapdown.js file into the web-root
+cp /opt/openshift/assets/strapdown.js /opt/openshift/src
+
+# We set a default title in case there's no one defined
+: ${TITLE:="Strapdown web"}
+
+# Copy everything else (images, etc,...)
+cp -Rf /tmp/src/. /opt/openshift/src/
+
+for i in `ls /tmp/src/*.md`
+do
+  # Get filename
+  __filename=$(basename ${i})
+  echo "[INFO] Processing ${__filename}"
+  # Copy the template with the same name, but .html extension
+  cp /tmp/src/${_filename} /opt/openshift/src/{__filename}.html 
+  # Replace tokens #TITLE# and #MARKDOWN#
+  sed -i -e 's/#TITLE#/${TITLE}' /opt/openshift/src/{__filename}.html
+  # Read contents of the file as a variable
+  __contents=$(</tmp/src/${_filename})
+  sed -i -e 's/#MARKDOWN#/${__contents}' /opt/openshift/src/{__filename}.html
+  echo "[INFO] ${_filename} done"
+done
+echo "[INFO] Build finish"
