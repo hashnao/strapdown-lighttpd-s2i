@@ -12,7 +12,7 @@ echo "[INFO] Building application into strapdown web"
 cp /opt/app-root/assets/strapdown.js /opt/app-root/src
 
 # We set a default title in case there's no one defined
-: ${TITLE:="Strapdown web"}
+__title=${TITLE:-"Strapdown web"}
 
 # Copy everything else (images, etc,...)
 cp -Rf /tmp/src/. /opt/app-root/src/
@@ -25,7 +25,7 @@ do
   # Copy the template with the same name, but .html extension
   cp -f /opt/app-root/assets/template.html /opt/app-root/src/${__filename}.html 
   # Replace tokens #TITLE# and #MARKDOWN#
-  sed -i -e "s/#TITLE#/$(echo ${TITLE} | sed -e 's/[\/&]/\\&/g')/g" /opt/app-root/src/${__filename}.html
+  sed -i -e "s/#TITLE#/$(echo ${__title} | sed -e 's/[\/&]/\\&/g')/g" /opt/app-root/src/${__filename}.html
   # Read contents of the file as a variable
   __contents=$(</tmp/src/${__filename})
   sed -i -e "s/#MARKDOWN#/$(echo ${__contents} | sed -e 's/[\/&]/\\&/g')/g" /opt/app-root/src/${__filename}.html
