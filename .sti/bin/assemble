@@ -9,10 +9,11 @@
 
 echo "[INFO] Building application into strapdown web"
 # Copy the strapdown.js file into the web-root
-cp /opt/app-root/assets/strapdown.js /opt/app-root/src
+cp -Rf /opt/app-root/assets/* /opt/app-root/src/
 
 # We set a default title in case there's no one defined
-__title=${TITLE:-"Strapdown web"}
+TITLE=${TITLE:-"Strapdown web"}
+THEME=${THEME:-"openshift"}
 
 # Copy everything else (images, etc,...)
 cp -Rf /tmp/src/. /opt/app-root/src/
@@ -22,13 +23,20 @@ do
   # Get filename
   __filename=$(basename ${i})
   echo "[INFO] Processing ${__filename}"
-  # Copy the template with the same name, but .html extension
-  cp -f /opt/app-root/assets/template.html /opt/app-root/src/${__filename}.html 
-  # Replace tokens #TITLE# and #MARKDOWN#
-  sed -i -e "s/#TITLE#/$(echo ${__title} | sed -e 's/[\/&]/\\&/g')/g" /opt/app-root/src/${__filename}.html
   # Read contents of the file as a variable
-  __contents=$(</tmp/src/${__filename})
-  sed -i -e "s/#MARKDOWN#/$(echo ${__contents} | sed -e 's/[\/&]/\\&/g')/g" /opt/app-root/src/${__filename}.html
+  CONTENT=$(</tmp/src/${__filename})
+  # Copy the template with the same name, but .html extension
+  cat > /opt/app-root/src/${__filename}.html <<-EOF
+<html>
+<title>${TITLE}</title>
+
+<xmp theme="${THEME}" style="display:none;">
+${CONTENT}
+</xmp>
+
+<script src="strapdown.js"></script>
+</html>
+EOF
   echo "[INFO] ${__filename} done"
 done
 echo "[INFO] Build finish"

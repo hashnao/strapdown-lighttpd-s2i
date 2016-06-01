@@ -370,21 +370,26 @@ var PR=win['PR']={'createSimpleLexer':createSimpleLexer,'registerLangHandler':re
   var theme = markdownEl.getAttribute('theme') || 'bootstrap';
   theme = theme.toLowerCase();
 
+  // If theme is OpenShift
+  isOpenshift = (theme == 'openshift');
+
   // Stylesheets
   var linkEl = document.createElement('link');
   linkEl.href = originBase + '/themes/'+theme+'.min.css';
   linkEl.rel = 'stylesheet';
   document.head.appendChild(linkEl);
 
-  var linkEl = document.createElement('link');
-  linkEl.href = originBase + '/strapdown.css';
-  linkEl.rel = 'stylesheet';
-  document.head.appendChild(linkEl);
+  if( ! isOpenshift) {
+   var linkEl = document.createElement('link');
+   linkEl.href = originBase + '/strapdown.css';
+   linkEl.rel = 'stylesheet';
+   document.head.appendChild(linkEl);
 
-  var linkEl = document.createElement('link');
-  linkEl.href = originBase + '/themes/bootstrap-responsive.min.css';
-  linkEl.rel = 'stylesheet';
-  document.head.appendChild(linkEl);
+   var linkEl = document.createElement('link');
+   linkEl.href = originBase + '/themes/bootstrap-responsive.min.css';
+   linkEl.rel = 'stylesheet';
+   document.head.appendChild(linkEl);
+  }
 
   //////////////////////////////////////////////////////////////////////
   //
@@ -400,9 +405,18 @@ var PR=win['PR']={'createSimpleLexer':createSimpleLexer,'registerLangHandler':re
 
   // Insert navbar if there's none
   var newNode = document.createElement('div');
-  newNode.className = 'navbar navbar-fixed-top';
+  if(isOpenshift) {
+    newNode.className = 'navbar navbar-default navbar-openshift';
+  } else {
+     newNode.className = 'navbar navbar-fixed-top';
+  }
+  
   if (!navbarEl && titleEl) {
-    newNode.innerHTML = '<div class="navbar-inner"> <div class="container"> <div id="headline" class="brand"> </div> </div> </div>';
+     if(isOpenshift) {
+      newNode.innerHTML = '<div class="navbar-header"><a href="/" class="navbar-brand"></a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav navbar-right"><li class="hidden-xs hidden-sm"><a href="https://docs.openshift.com/" class="nav-sign-up" target="_blank">Documentation</a></li></ul></div>';
+     } else {
+      newNode.innerHTML = '<div class="navbar-inner"> <div class="container"> <div id="headline" class="brand"> </div> </div> </div>';
+    }
     document.body.insertBefore(newNode, document.body.firstChild);
     var title = titleEl.innerHTML;
     var headlineEl = document.getElementById('headline');
