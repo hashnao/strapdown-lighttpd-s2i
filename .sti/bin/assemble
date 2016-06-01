@@ -25,10 +25,10 @@ do
   # Copy the template with the same name, but .html extension
   cp -f /opt/app-root/assets/template.html /opt/app-root/src/${__filename}.html 
   # Replace tokens #TITLE# and #MARKDOWN#
-  sed -i -e 's/#TITLE#/${TITLE}/g' /opt/app-root/src/${__filename}.html
+  sed -i -e "s/#TITLE#/${TITLE}/g" /opt/app-root/src/${__filename}.html
   # Read contents of the file as a variable
   __contents=$(</tmp/src/${__filename})
-  sed -i -e 's/#MARKDOWN#/${__contents}/g' /opt/app-root/src/${__filename}.html
+  sed -i -e "s/#MARKDOWN#/${__contents}/g" /opt/app-root/src/${__filename}.html
   echo "[INFO] ${__filename} done"
 done
 echo "[INFO] Build finish"
