@@ -123,8 +123,8 @@ prepare
 check_result $?
 
 # Verify the 'usage' script is working properly
-test_usage
-check_result $?
+#test_usage
+#check_result $?
 
 # Verify that the HTTP connection can be established to test application container
 run_test_application &

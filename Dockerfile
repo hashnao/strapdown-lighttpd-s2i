@@ -19,16 +19,17 @@ RUN yum install -y lighttpd  && \
 
 # Although this is defined in openshift/base-centos7 image it's repeated here
 # to make it clear why the following COPY operation is happening
-LABEL io.openshift.s2i.scripts-url=image:///usr/local/sti
-# Copy the S2I scripts from ./.sti/bin/ to /usr/local/sti
-COPY ./.sti/bin/ /usr/local/sti
+LABEL io.openshift.s2i.scripts-url=image:///usr/libexec/sti
+# Copy the S2I scripts from ./.sti/bin/ to /usr/libexec/sti
+COPY ./.sti/bin/ /usr/libexec/sti
 
 # Copy the lighttpd configuration file
-COPY ./etc/ /opt/openshift/etc
-COPY ./assets/ /opt/openshift/assets
+COPY ./etc/ /opt/app-root/etc/
+COPY ./assets/ /opt/app-root/assets/
+RUN mkdir -p /opt/app-root/src
 
 # Drop the root user and make the content of /opt/openshift owned by user 1001
-RUN chown -R 1001:1001 /opt/openshift
+RUN chown -R 1001:0 /opt/app-root
 
 # Set the default user for the image, the user itself was created in the base image
 USER 1001

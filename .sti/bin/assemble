@@ -9,13 +9,13 @@
 
 echo "[INFO] Building application into strapdown web"
 # Copy the strapdown.js file into the web-root
-cp /opt/openshift/assets/strapdown.js /opt/openshift/src
+cp /opt/app-root/assets/strapdown.js /opt/app-root/src
 
 # We set a default title in case there's no one defined
 : ${TITLE:="Strapdown web"}
 
 # Copy everything else (images, etc,...)
-cp -Rf /tmp/src/. /opt/openshift/src/
+cp -Rf /tmp/src/. /opt/app-root/src/
 
 for i in `ls /tmp/src/*.md`
 do
@@ -23,12 +23,12 @@ do
   __filename=$(basename ${i})
   echo "[INFO] Processing ${__filename}"
   # Copy the template with the same name, but .html extension
-  cp /tmp/src/${_filename} /opt/openshift/src/{__filename}.html 
+  cp -f /opt/app-root/assets/template.html /opt/app-root/src/${__filename}.html 
   # Replace tokens #TITLE# and #MARKDOWN#
-  sed -i -e 's/#TITLE#/${TITLE}' /opt/openshift/src/{__filename}.html
+  sed -i -e 's/#TITLE#/${TITLE}/g' /opt/app-root/src/${__filename}.html
   # Read contents of the file as a variable
-  __contents=$(</tmp/src/${_filename})
-  sed -i -e 's/#MARKDOWN#/${__contents}' /opt/openshift/src/{__filename}.html
-  echo "[INFO] ${_filename} done"
+  __contents=$(</tmp/src/${__filename})
+  sed -i -e 's/#MARKDOWN#/${__contents}/g' /opt/app-root/src/${__filename}.html
+  echo "[INFO] ${__filename} done"
 done
 echo "[INFO] Build finish"
