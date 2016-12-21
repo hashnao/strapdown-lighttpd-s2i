@@ -13,7 +13,8 @@ LABEL io.k8s.description="Platform for serving static HTML filesi built with str
       io.openshift.tags="builder,html,strapdown,lighttpd"
 
 # Install the required software, namely Lighttpd and
-RUN yum install -y lighttpd  && \
+RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+    yum install -y lighttpd  && \
     # clean yum cache files, as they are not needed and will only make the image bigger in the end
     yum clean all -y
 
